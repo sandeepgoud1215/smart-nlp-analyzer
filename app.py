@@ -1,53 +1,36 @@
 import streamlit as st
+from classifier import classify_text
+from keywords import extract_keywords
+from ner import extract_entities
+from sentiment import analyze_sentiment
+from language import detect_language
+from summarizer import summarize_text
 
-from utils.ner import extract_named_entities
-from utils.sentiment import analyze_sentiment
-from utils.classifier import classify_text
-from utils.summarizer import summarize_text
-from utils.keywords import extract_keywords
-from utils.language import detect_language
+st.title("Smart NLP Analyzer")
 
-st.set_page_config(page_title="Smart NLP Analyzer", layout="wide")
+text = st.text_area("Enter text to analyze:")
 
-st.title("🧠 Smart NLP Analyzer")
-st.markdown("Analyze your text using multiple Natural Language Processing tools in one place.")
+if text:
+    st.subheader("Language Detection")
+    lang = detect_language(text)
+    st.write(lang)
 
-text = st.text_area("✍️ Enter Text to Analyze", height=200)
+    st.subheader("Text Classification")
+    classification = classify_text(text)
+    st.write(classification)
 
-if st.button("🔍 Analyze") and text:
-    with st.spinner("Running NLP tools..."):
+    st.subheader("Keyword Extraction")
+    keywords = extract_keywords(text)
+    st.write(keywords)
 
-        # Named Entity Recognition
-        st.subheader("🔍 Named Entity Recognition (NER)")
-        entities = extract_named_entities(text)
-        if entities:
-            for ent, label in entities:
-                st.markdown(f"**{ent}** → `{label}`")
-        else:
-            st.info("No named entities found.")
+    st.subheader("Named Entity Recognition")
+    entities = extract_entities(text)
+    st.write(entities)
 
-        # Sentiment Analysis
-        st.subheader("😊 Sentiment Analysis")
-        sentiment = analyze_sentiment(text)
-        st.json(sentiment)
+    st.subheader("Sentiment Analysis")
+    sentiment = analyze_sentiment(text)
+    st.write(sentiment)
 
-        # Text Classification
-        st.subheader("🏷️ Zero-Shot Text Classification")
-        labels = ["business", "sports", "politics", "education", "entertainment"]
-        classification = classify_text(text, labels)
-        st.json(classification)
-
-        # Summarization
-        st.subheader("🧾 Text Summarization")
-        summary = summarize_text(text)
-        st.write(summary[0]['summary_text'])
-
-        # Keyword Extraction
-        st.subheader("🔑 Keyword Extraction")
-        keywords = extract_keywords(text)
-        st.write(", ".join(keywords))
-
-        # Language Detection
-        st.subheader("🌐 Language Detection")
-        lang = detect_language(text)
-        st.write(f"Detected Language: `{lang}`")
+    st.subheader("Summarization")
+    summary = summarize_text(text)
+    st.write(summary)
